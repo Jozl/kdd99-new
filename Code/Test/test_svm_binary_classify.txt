@@ -1,0 +1,36 @@
+∂˛∑÷¿‡
+------------------------------------
+kdd99_new_multi.dat
+{'normal': 1000, 'warezclient': 100}
+normal vs warezclient
+{'NORMAL': 1000, 'R2L': 100}
+acc+: 1.000, acc-: 0.036, accuracy: 0.912, precision: 0.912, recall: 1.000, F1: 0.954, G-mean: 0.120 
+[0;36m--expending----------------[0m
+{'NORMAL': 1000, 'R2L': 1000}
+acc+: 1.000, acc-: 0.903, accuracy: 0.952, precision: 0.912, recall: 1.000, F1: 0.954, G-mean: 0.950 
+kflod∂‘’Ê µ ˝æ›“≤æ˘∑÷
+------------------------------------
+kdd99_new_multi.dat
+{'normal': 1000, 'warezclient': 100}
+normal vs warezclient
+[0;36m--expending----------------[0m
+{'NORMAL': 1000, 'R2L': 900}
+acc+: 1.000, acc-: 0.903, accuracy: 0.952, precision: 0.911, recall: 1.000, F1: 0.954, G-mean: 0.950 
+÷ª”√fake ˝æ›≤Œ”Î∑÷¿‡
+------------------------------------
+kdd99_new_multi.dat
+{'normal': 1000, 'warezclient': 100}
+normal vs warezclient
+expending-------------------------------------------------------
+{'NORMAL': 1000, 'R2L': 1000}
+acc+: 1.000, acc-: 1.000, accuracy: 1.000, precision: 1.000, recall: 1.000, F1: 1.000, G-mean: 1.000 
+÷ª”√’Ê µ ˝æ›≤Œ”Î∑÷¿‡
+------------------------------------
+kdd99_new_multi.dat
+{'normal': 1000, 'warezclient': 100}
+normal vs warezclient
+[0;36m--expending----------------[0m
+{'NORMAL': 1000, 'R2L': 900}
+test data class:  {'R2L': 100}
+predicted data class:  {'NORMAL': 97, 'R2L': 3}
+acc_true: 0.030
