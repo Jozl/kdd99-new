@@ -13,6 +13,8 @@ from Code.Dataset.data import Data, DataType
 from Code.Dataset.dataset import MyDataSet
 from Code.Vae.net import NetVAE
 
+torch.autograd.set_detect_anomaly(True)
+
 
 class Vae:
     def __init__(self, data_name, target_class, target_num, module_features, learning_rate, batch_size, log=False):
@@ -22,6 +24,8 @@ class Vae:
         self.target_num = target_num
 
         dataset = MyDataSet(data_name, target_class=target_class)
+        for d in dataset.datalist:
+            print(d.attrlist)
         self.dataset = dataset
 
         # print(dataset.data_max)
@@ -79,8 +83,8 @@ class Vae:
             recon_loss, kl_loss = self.batch_op(data_inputs, recon_loss, kl_loss)
 
         batch_index += 1
-        recon_loss /= (batch_index * self.batch_size)
-        kl_loss /= (batch_index * self.batch_size)
+        recon_loss = recon_loss / (batch_index * self.batch_size)
+        kl_loss = kl_loss / (batch_index * self.batch_size)
 
         if self.log:
             self.kl_loss_list.append(kl_loss)
@@ -95,7 +99,7 @@ class Vae:
         data_output_tensor, _, _ = self.net(data_input_tensor)
         data_output = self.dataset.decode(data_output_tensor.tolist())
         # data_output.append(self.target_class + '.')
-        data_output = Data(data_output,dataclass=self.target_class)
+        data_output = Data(data_output, dataclass=self.target_class)
 
         return data_output
 

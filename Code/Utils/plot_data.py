@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 
 import matplotlib.pyplot as plt
@@ -24,7 +26,7 @@ def normfun(x, mu, sigma):
 
 
 if __name__ == '__main__':
-    dataname = 'yeast5.dat'
+    dataname = 'ecoli4.dat'
     print(dataname)
     # dataname = 'kdd99_new_multi.dat'
 
@@ -39,7 +41,6 @@ if __name__ == '__main__':
     negative_len = positive_len - negative_len
 
     dataset_negative = MyDataSet(dataname, target_class=negative_class, encode=True)
-    data_rev_negative = dataset_negative.reverse_data()
 
     for expend_alg in [
         # None,
@@ -48,7 +49,8 @@ if __name__ == '__main__':
         'smote_enn',
         'smote_rsb',
     ]:
-        for i, data_neg in enumerate( data_rev_negative):
+        data_rev_negative = copy.deepcopy(dataset_negative.reverse_data())
+        for i, data_neg in enumerate(data_rev_negative):
             if list(dataset_negative.attrtype_dict.values())[i] not in [DataType.CONTINUOUS]:
                 continue
 
@@ -56,10 +58,9 @@ if __name__ == '__main__':
                 atr_name = 'Atr-{}'.format(i)
 
                 data_predict = eval('gen_with_{}'.format(expend_alg))(negative_class, negative_len, dataname)
-                # data_predict = [d.to_data(attrtype_dict=dataset.attrtype_dict, attrtype_list=[DataType.CONTINUOUS]) for d in
-                #                 data_predict]
-                data_predict = [d.attrlist[i] for d in data_predict]
 
+                # data_predict = data_predict[:,i]
+                data_predict = [d[i] for d in data_predict]
                 draw(data_predict, 'red')
                 draw(data_neg, 'green')
                 # draw(data, 'blue')

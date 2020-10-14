@@ -26,5 +26,5 @@ def dataset_create(classes, classes_len):
 
 
 if __name__ == '__main__':
-    data_name = dataset_create(['normal', 'warezclient'], (1000, 320))
+    data_name = dataset_create(['normal', 'warezclient'], (1000, 60))
     print(data_name)

@@ -65,12 +65,12 @@ class MyDataSet(Dataset):
                 num, std, mean in
                 zip(attrlist, self.std, self.mean)]
 
-    def denormalize(self, dataname):
+    def denormalize(self, data):
         # return [num * (data_max - data_min) + data_min for num, data_min, data_max in
-        #         zip(dataname, self.data_min, self.data_max)]
+        #         zip(data, self.data_min, self.data_max)]
         # z-score
         return [num * std + mean for num, std, mean in
-                zip(dataname, self.std, self.mean)]
+                zip(data, self.std, self.mean)]
 
     def reverse_data(self):
         return [[d[i] for d in self.datalist] for i in range(self.datalist[0].__len__())]

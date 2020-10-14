@@ -21,6 +21,7 @@ def binary_classify(dataset, positive, negative, positive_len, negative_len, dat
     # 只用连续值
     data_train = [d.to_data(attrtype_dict=dataset.attrtype_dict, attrtype_list=[DataType.CONTINUOUS]) for d in
                   data_train]
+
     data_copy = copy.deepcopy(data_train)
 
     data_ori = [d for d in data_copy if d.dataclass == negative]
@@ -120,18 +121,18 @@ def main(data_name, expend_alg):
 if __name__ == '__main__':
     data_names = [
         'yeast-0-5-6-7-9_vs_4.dat',
-        'ecoli4.dat',
-        'glass5.dat',
-        'yeast5.dat',
-        'yeast6.dat',
+        # 'ecoli4.dat',
+        # 'glass5.dat',
+        # 'yeast5.dat',
+        # 'yeast6.dat',
         # 'kdd99_new_multi.dat',
     ]
     expend_algs = [
-        None,
+        # None,
         'vae',
-        'smote',
-        'smote_enn',
-        'smote_rsb',
+        # 'smote',
+        # 'smote_enn',
+        # 'smote_rsb',
     ]
 
     c.writerow(['data_name', 'acc+', 'acc-', 'acc_original', 'accuracy', 'precision', 'recall', 'F1', 'G-mean'])
