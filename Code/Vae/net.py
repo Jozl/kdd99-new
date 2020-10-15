@@ -3,70 +3,55 @@ from torch import nn, Tensor
 
 
 class NetVAE(nn.Module):
-    def __init__(self, in_channels, latent_dim=2, hidden_dims=[32, 64, 128, 256, 512]):
+    def __init__(self, in_features, latent_dim=2, hidden_dims=None):
         super(NetVAE, self).__init__()
 
+        if hidden_dims is None:
+            hidden_dims = [32, 64, 128, 256, 512]
         self.encoder, self.decoder = [], []
+        data_features = in_features
 
-        in_channels += 1  # To account for the extra label channel
         # Build Encoder
         modules = []
         for h_dim in hidden_dims:
             modules.append(
                 nn.Sequential(
-                    nn.Conv2d(in_channels, out_channels=h_dim,
-                              kernel_size=3, stride=2, padding=1),
-                    nn.BatchNorm2d(h_dim),
+                    nn.Linear(in_features, h_dim),
                     nn.LeakyReLU())
             )
-            in_channels = h_dim
+            in_features = h_dim
 
         self.encoder = nn.Sequential(*modules)
+
+
         self.fc_mean = nn.Linear(hidden_dims[-1], latent_dim)
         self.fc_log_var = nn.Linear(hidden_dims[-1], latent_dim)
 
         # Build Decoder
         hidden_dims.reverse()
         modules = []
+        self.decoder_input = nn.Linear(latent_dim, hidden_dims[0])
         for i in range(len(hidden_dims) - 1):
             modules.append(
                 nn.Sequential(
-                    nn.ConvTranspose2d(hidden_dims[i],
-                                       hidden_dims[i + 1],
-                                       kernel_size=3,
-                                       stride=2,
-                                       padding=1,
-                                       output_padding=1),
-                    nn.BatchNorm2d(hidden_dims[i + 1]),
+                    nn.Linear(hidden_dims[i], hidden_dims[i + 1]),
                     nn.LeakyReLU())
             )
 
         self.decoder = nn.Sequential(*modules)
 
-        self.final_layer = nn.Sequential(
-            nn.ConvTranspose2d(hidden_dims[-1],
-                               hidden_dims[-1],
-                               kernel_size=3,
-                               stride=2,
-                               padding=1,
-                               output_padding=1),
-            nn.BatchNorm2d(hidden_dims[-1]),
-            nn.LeakyReLU(),
-            nn.Conv2d(hidden_dims[-1], out_channels=3,
-                      kernel_size=3, padding=1),
-            nn.Tanh())
+        self.final_layer = nn.Linear(hidden_dims[-1], data_features)
 
     def encode(self, x):
-        for fc in self.encoder:
-            x = torch.relu(fc(x))
+        result = self.encoder(x)
 
-        return self.fc_mean(x), self.fc_log_var(x)
+        return self.fc_mean(result), self.fc_log_var(result)
 
     def decode(self, z):
-        for fc in self.decoder[0: -1]:
-            z = torch.relu(fc(z))
-
-        return torch.sigmoid(self.final_layer(z))
+        result = self.decoder_input(z)
+        result = self.decoder(result)
+        result = self.final_layer(result)
+        return result
 
     def reparametrization(self, mean, log_var):
         std = 0.5 * torch.exp(log_var)

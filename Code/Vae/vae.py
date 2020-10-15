@@ -24,11 +24,10 @@ class Vae:
 
         dataset = MyDataSet(data_name, target_class=target_class)
         self.dataset = dataset
-
         self.dataloader_train = DataLoader(dataset=dataset, batch_size=batch_size,
-                                           shuffle=True, drop_last=False)
+                                           shuffle=False, drop_last=False)
 
-        self.net = NetVAE(module_features=[dataset.datalist[0].__len__()] + module_features)
+        self.net = NetVAE(in_features=dataset.datalist[0].__len__())
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=learning_rate)
 
         self.targetdata_list = []
@@ -94,11 +93,10 @@ class Vae:
 
 def main():
     data_name = 'kdd99_new_multi.dat'
-    target_class = 'warezclient'
-    # target_num = 100
+    target_class = 'smurf'
 
     learning_rate = 0.00064
-    batch_size = 20
+    batch_size = 50
     module_features = [10, 8]
     training_round = 100
 
