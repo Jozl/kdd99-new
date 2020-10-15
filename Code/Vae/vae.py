@@ -23,7 +23,6 @@ class Vae:
         self.target_class = target_class
 
         dataset = MyDataSet(data_name, target_class=target_class)
-        print(dataset.decode(dataset.datalist[-1]))
         self.dataset = dataset
 
         self.dataloader_train = DataLoader(dataset=dataset, batch_size=batch_size,
@@ -44,50 +43,36 @@ class Vae:
             self.loss_log = open(self.dir_path + self.file_path + 'loss_log.txt', 'w')
 
     def __call__(self, epochs: int):
-        self.recon_loss_list = []
-        self.kl_loss_list = []
-        self.loss_list = []
-
         for epoch in range(epochs):
             self.train(epoch)
 
         self.net.eval()
 
         if self.log:
-            # plt.plot(self.kl_loss_list, label='kl')
-            # plt.plot(self.recon_loss_list, label='recon')
-            # plt.plot(self.loss_list, label='sum')
-            # plt.xlabel('epoch')
-            # plt.legend()
-            # plt.savefig(self.dir_path + self.file_path + 'label={}_loss plt.jpg'.format(self.target_class))
-            # plt.close('all')
-
             self.loss_log.close()
-            # os.startfile(self.dir_path)
         return self
 
     def train(self, epoch):
         self.net.train()
 
-        batch_index = 0
-        recon_loss, kl_loss = 0, 0
+        log_loss = 0
         for batch_index, (data_inputs, data_classes) in enumerate(self.dataloader_train):
             for data_input, data_class in zip(data_inputs, data_classes):
                 if data_class == self.target_class:
                     self.targetdata_list.append(data_input)
-            recon_loss, kl_loss = self.batch_op(data_inputs, recon_loss, kl_loss)
 
-        batch_index += 1
-        recon_loss = recon_loss / (batch_index * self.batch_size)
-        kl_loss = kl_loss / (batch_index * self.batch_size)
+            loss = self.loss_function(data_inputs, *self.net(data_inputs))
+            self.optimizer.zero_grad()
+            loss.backward()
+            self.optimizer.step()
+
+            log_loss += loss
+
+        log_loss = log_loss / (batch_index * self.batch_size + self.batch_size)
 
         if self.log:
-            self.kl_loss_list.append(kl_loss)
-            self.recon_loss_list.append(recon_loss)
-            self.loss_list.append(recon_loss + kl_loss)
-            self.loss_log.write('epoch = {:>2d}: recon_loss: {:>4.7f}, KL_loss: {:>4.7f}, total_loss: {:>4.7f}\n'
-                                .format(epoch + 1, recon_loss, kl_loss,
-                                        recon_loss + kl_loss))
+            self.loss_log.write('epoch = {:>2d}: total_loss: {:>4.7f}\n'
+                                .format(epoch + 1, log_loss))
 
     def next(self):
         data_input_tensor = self.targetdata_list[random.randint(0, self.targetdata_list.__len__() - 1)]
@@ -98,38 +83,23 @@ class Vae:
 
         return data_output
 
-    def batch_op(self, data_inputs, recon_loss, kl_loss):
-        data_outputs, mean, log_var = self.net(data_inputs)
-        batch_recon_loss, batch_kl_loss = self.loss_function(input_tensor=data_outputs, target_tensor=data_inputs,
-                                                             mean=mean,
-                                                             log_var=log_var)
-
-        recon_loss += batch_recon_loss
-        kl_loss += batch_kl_loss
-        batch_loss = recon_loss + kl_loss
-
-        self.optimizer.zero_grad()
-        batch_loss.backward(retain_graph=True)
-        self.optimizer.step()
-
-        return recon_loss, kl_loss
-
     @staticmethod
-    def loss_function(input_tensor, target_tensor, mean, log_var) -> (Tensor, Tensor):
+    def loss_function(target_tensor, input_tensor, mean, log_var) -> (Tensor, Tensor):
         reconstruction_loss = torch.nn.CosineSimilarity()(input_tensor, target_tensor).sum()
         # reconstruction_loss = torch.nn.BCELoss(reduction='sum')(input_tensor, target_tensor)
         kl_divergence = -0.5 * torch.sum(1 + log_var - torch.exp(log_var) - mean ** 2)
 
-        return reconstruction_loss, kl_divergence
+        return reconstruction_loss + kl_divergence
 
-if __name__ == '__main__':
+
+def main():
     data_name = 'kdd99_new_multi.dat'
     target_class = 'warezclient'
     # target_num = 100
 
     learning_rate = 0.00064
-    batch_size = 100
-    module_features = [10,8]
+    batch_size = 20
+    module_features = [10, 8]
     training_round = 100
 
     generator = Vae(data_name, target_class, module_features, learning_rate, batch_size, log=True)(training_round)
@@ -137,3 +107,6 @@ if __name__ == '__main__':
     output = generator.next()
     print(output)
 
+
+if __name__ == '__main__':
+    main()

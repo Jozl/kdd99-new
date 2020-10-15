@@ -45,9 +45,9 @@ if __name__ == '__main__':
     for expend_alg in [
         # None,
         'vae',
-        'smote',
-        'smote_enn',
-        'smote_rsb',
+        # 'smote',
+        # 'smote_enn',
+        # 'smote_rsb',
     ]:
         data_rev_negative = copy.deepcopy(dataset_negative.reverse_data())
         for i, data_neg in enumerate(data_rev_negative):

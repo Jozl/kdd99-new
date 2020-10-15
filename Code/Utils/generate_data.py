@@ -7,9 +7,9 @@ from Code.Vae.vae import Vae
 
 def gen_with_vae(target_class, target_num, data_name, ):
     learning_rate = 0.00064
-    batch_size = 100
-    module_features = [1]
-    training_round = 64
+    batch_size = 50
+    module_features = [16,10]
+    training_round = 100
 
     vae = Vae(data_name, target_class, module_features, learning_rate, batch_size, log=True)(training_round)
     return [vae.next() for _ in range(target_num)]

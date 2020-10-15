@@ -1,3 +1,6 @@
-a = [1, 2, 3, 4, ]
+def A(a, b, c, d):
+    print(a, b, c, d)
 
-print(('a -> ' + 4 * '{}, ').format(*a))
+
+B = [1, 2, 3]
+A(*B, 4)

@@ -1,11 +1,6 @@
 import copy
-from time import time
 
-from sklearn import tree
 from sklearn.svm import SVC
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.naive_bayes import GaussianNB
 from sklearn.model_selection import KFold
 
 from Code.Utils.classify_helper import compute_classification_indicators, compute_TP_TN_FP_FN, get_X_y
@@ -121,18 +116,18 @@ def main(data_name, expend_alg):
 if __name__ == '__main__':
     data_names = [
         'yeast-0-5-6-7-9_vs_4.dat',
-        # 'ecoli4.dat',
-        # 'glass5.dat',
-        # 'yeast5.dat',
-        # 'yeast6.dat',
-        # 'kdd99_new_multi.dat',
+        'ecoli4.dat',
+        'glass5.dat',
+        'yeast5.dat',
+        'yeast6.dat',
+        'kdd99_new_multi.dat',
     ]
     expend_algs = [
-        # None,
+        None,
         'vae',
-        # 'smote',
-        # 'smote_enn',
-        # 'smote_rsb',
+        'smote',
+        'smote_enn',
+        'smote_rsb',
     ]
 
     c.writerow(['data_name', 'acc+', 'acc-', 'acc_original', 'accuracy', 'precision', 'recall', 'F1', 'G-mean'])
