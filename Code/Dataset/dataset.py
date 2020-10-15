@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 
 import torch
@@ -51,8 +53,9 @@ class MyDataSet(Dataset):
 
     def decode(self, data):
         if isinstance(data, Data):
-            data.attrlist = self.denormalize(data.attrlist)
-            return data
+            res = copy.deepcopy(data)
+            res.attrlist = self.denormalize(res.attrlist)
+            return res
         else:
             return self.denormalize(data)
 

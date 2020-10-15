@@ -17,19 +17,14 @@ torch.autograd.set_detect_anomaly(True)
 
 
 class Vae:
-    def __init__(self, data_name, target_class, target_num, module_features, learning_rate, batch_size, log=False):
+    def __init__(self, data_name, target_class, module_features, learning_rate, batch_size, log=False):
         self.learning_rate = learning_rate
         self.batch_size = batch_size
         self.target_class = target_class
-        self.target_num = target_num
 
         dataset = MyDataSet(data_name, target_class=target_class)
-        for d in dataset.datalist:
-            print(d.attrlist)
+        print(dataset.decode(dataset.datalist[-1]))
         self.dataset = dataset
-
-        # print(dataset.data_max)
-        # print(dataset.data_min)
 
         self.dataloader_train = DataLoader(dataset=dataset, batch_size=batch_size,
                                            shuffle=True, drop_last=False)
@@ -42,7 +37,7 @@ class Vae:
         self.log = log
         if log:
             self.dir_path = 'KDD99_FAKE_{}'.format(dataset.dataname, )
-            self.file_path = '/from_{}_gen_{}_label={}_'.format(dataset.__len__(), target_num,
+            self.file_path = '/from_{}_gen_{}_label={}_'.format(dataset.__len__(), 0,
                                                                 target_class)
             if not os.path.exists(self.dir_path):
                 os.mkdir(self.dir_path)
@@ -126,3 +121,19 @@ class Vae:
         kl_divergence = -0.5 * torch.sum(1 + log_var - torch.exp(log_var) - mean ** 2)
 
         return reconstruction_loss, kl_divergence
+
+if __name__ == '__main__':
+    data_name = 'kdd99_new_multi.dat'
+    target_class = 'warezclient'
+    # target_num = 100
+
+    learning_rate = 0.00064
+    batch_size = 100
+    module_features = [10,8]
+    training_round = 100
+
+    generator = Vae(data_name, target_class, module_features, learning_rate, batch_size, log=True)(training_round)
+
+    output = generator.next()
+    print(output)
+

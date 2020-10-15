@@ -72,5 +72,8 @@ class Data:
     def __setitem__(self, key, value):
         self.attrlist[key] = value
 
+    def __str__(self):
+        return ('Data -> [' + self.__len__() * '{:>2.3f}, ' + ']').format(*self.attrlist)
+
     def __len__(self):
         return len(self.attrlist)

@@ -26,13 +26,13 @@ class NetVAE(Module):
 
     def encode(self, x):
         for fc in self.encoder:
-            x = torch.nn.ReLU(fc(x), inplace=False)
+            x = torch.relu(fc(x))
 
         return self.fc_mean(x), self.fc_log_var(x)
 
     def decode(self, z):
         for fc in self.decoder[0: -1]:
-            z = torch.nn.ReLU(fc(z), inplace=False)
+            z = torch.relu(fc(z))
 
         return torch.sigmoid(self.fc_last(z))
 

@@ -1,1 +1,3 @@
-print('This is a \033[1;35m test \033[0m!')
+a = [1, 2, 3, 4, ]
+
+print(('a -> ' + 4 * '{}, ').format(*a))

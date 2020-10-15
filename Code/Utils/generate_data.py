@@ -11,7 +11,7 @@ def gen_with_vae(target_class, target_num, data_name, ):
     module_features = [1]
     training_round = 64
 
-    vae = Vae(data_name, target_class, target_num, module_features, learning_rate, batch_size, log=True)(training_round)
+    vae = Vae(data_name, target_class, module_features, learning_rate, batch_size, log=True)(training_round)
     return [vae.next() for _ in range(target_num)]
 
 
