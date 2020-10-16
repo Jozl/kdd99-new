@@ -2,7 +2,7 @@ import csv
 
 
 class SheetWriter:
-    def __init__(self, file_name='sheet_test.csv'):
+    def __init__(self, file_name='sheet_saved.csv'):
         self.csv_writer = csv.writer(open(file_name, 'w', newline=''))
 
     def writerow(self, row):

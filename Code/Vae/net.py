@@ -3,7 +3,7 @@ from torch import nn, Tensor
 
 
 class NetVAE(nn.Module):
-    def __init__(self, in_features, latent_dim=2, hidden_dims=None):
+    def __init__(self, in_features, latent_dim=10, hidden_dims=None):
         super(NetVAE, self).__init__()
 
         if hidden_dims is None:
@@ -17,7 +17,8 @@ class NetVAE(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Linear(in_features, h_dim),
-                    nn.LeakyReLU())
+                    nn.ReLU(),
+                )
             )
             in_features = h_dim
 
@@ -35,7 +36,8 @@ class NetVAE(nn.Module):
             modules.append(
                 nn.Sequential(
                     nn.Linear(hidden_dims[i], hidden_dims[i + 1]),
-                    nn.LeakyReLU())
+                    nn.ReLU(),
+                )
             )
 
         self.decoder = nn.Sequential(*modules)
@@ -51,7 +53,7 @@ class NetVAE(nn.Module):
         result = self.decoder_input(z)
         result = self.decoder(result)
         result = self.final_layer(result)
-        return result
+        return torch.sigmoid(result)
 
     def reparametrization(self, mean, log_var):
         std = 0.5 * torch.exp(log_var)

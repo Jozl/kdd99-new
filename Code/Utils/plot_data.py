@@ -17,7 +17,7 @@ def draw(data, color, hist=True, plot=True):
         # plt.hist(data, bins=64, rwidth=0.9, facecolor=color, alpha=0.5, density=True)
         plt.hist(data, bins=64, rwidth=0.9, facecolor=color, alpha=0.5)
     if plot:
-        plt.plot(x, y, color=color)
+        plt.plot(x, y, color=color, alpha=0.5)
 
 
 def normfun(x, mu, sigma):
@@ -26,9 +26,8 @@ def normfun(x, mu, sigma):
 
 
 if __name__ == '__main__':
-    dataname = 'ecoli4.dat'
+    dataname = 'yeast6.dat'
     print(dataname)
-    # dataname = 'kdd99_new_multi.dat'
 
     dataset = MyDataSet(dataname, encode=True)
 

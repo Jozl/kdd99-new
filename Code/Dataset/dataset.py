@@ -10,7 +10,7 @@ from Code.Dataset.dataloader import DataLoader
 
 
 class MyDataSet(Dataset):
-    def __init__(self, dataname, target_class=None, encode=True):
+    def __init__(self, dataname, target_class=None):
         datalist = []
         dataclass_dict = {}
         attrtype_dict = {}
@@ -45,8 +45,7 @@ class MyDataSet(Dataset):
         self.datalist = datalist
 
         self.compute_data_min_max()
-        if encode:
-            self.encode()
+        self.encode()
 
     def encode(self):
         self.datalist = [Data(self.normalize(d), d.dataclass) for d in self.datalist]
@@ -84,6 +83,19 @@ class MyDataSet(Dataset):
         self.data_max = [max(d) for d in data_matrix]
         self.mean = [np.mean(d) for d in data_matrix]
         self.std = [np.std(d) for d in data_matrix]
+
+    @property
+    def get_original_datalist(self):
+        return list(map(self.decode, self.datalist))
+
+    def get_positive(self):
+        return sorted(self.dataclass_dict.items(), key=lambda kv: (kv[1], kv[0]))[-1][0]
+
+    def get_negative(self):
+        if len(self.dataclass_dict) == 2:
+            return sorted(self.dataclass_dict.items(), key=lambda kv: (kv[1], kv[0]))[0][0]
+        else:
+            return [kv[0] for kv in sorted(self.dataclass_dict.items(), key=lambda kv: (kv[1], kv[0]))[:-1]]
 
     def __getitem__(self, index):
         data = self.datalist[index]

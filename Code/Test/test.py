@@ -1,6 +1,5 @@
-def A(a, b, c, d):
-    print(a, b, c, d)
+from Code.Dataset.dataset import MyDataSet
 
-
-B = [1, 2, 3]
-A(*B, 4)
+d = MyDataSet('kdd99_new_multi.dat')
+print(d.datalist[-2])
+print(d.get_original_datalist[-2])
