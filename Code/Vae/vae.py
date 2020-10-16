@@ -84,8 +84,8 @@ class Vae:
 
     @staticmethod
     def loss_function(target_tensor, input_tensor, mean, log_var) -> (Tensor, Tensor):
-        reconstruction_loss = torch.nn.CosineSimilarity()(input_tensor, target_tensor).sum()
-        # reconstruction_loss = torch.nn.BCELoss(reduction='sum')(input_tensor, target_tensor)
+        # reconstruction_loss = torch.nn.CosineSimilarity()(input_tensor, target_tensor).sum()
+        reconstruction_loss = torch.nn.BCELoss(reduction='sum')(input_tensor, target_tensor)
         kl_divergence = -0.5 * torch.sum(1 + log_var - torch.exp(log_var) - mean ** 2)
 
         # print('loss: {} and {}'.format(reconstruction_loss, kl_divergence))
@@ -94,15 +94,18 @@ class Vae:
 
 
 def main():
-    data_name = 'kdd99_new_multi.dat'
-    # data_name = 'yeast5.dat'
+    # data_name = 'kdd99_new_multi.dat'
+    data_name = 'yeast6.dat'
+    data_name = 'yeast5.dat'
 
     dataset = MyDataSet(data_name)
     positive, negative = dataset.get_positive(), dataset.get_negative()
     print('p:{}, n:{}'.format(positive, negative))
     target_class = negative
 
-    original_datalist = dataset.get_original_datalist
+    original_datalist = [d.to_data(attrtype_dict=dataset.attrtype_dict,
+                                   attrtype_list=[DataType.CONTINUOUS]) for d in
+                         dataset.get_original_datalist]
     original_positive = [d for d in original_datalist if d.dataclass != target_class]
     original_negative = [d for d in original_datalist if d.dataclass == target_class]
 

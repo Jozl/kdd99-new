@@ -24,7 +24,7 @@ def binary_classify(dataset, positive, negative, positive_len, negative_len, dat
 
     if expend:
         negative_len = positive_len - negative_len
-        data_predict = eval('gen_with_{}'.format(expend))(negative, negative_len, data_name)
+        data_predict = eval('gen_with_{}'.format(expend))(negative, negative_len, data_name, encode=False)
         data_predict = [d.to_data(attrtype_dict=dataset.attrtype_dict, attrtype_list=[DataType.CONTINUOUS]) for d in
                         data_predict]
         data_train.extend(data_predict)

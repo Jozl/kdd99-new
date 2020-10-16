@@ -8,8 +8,8 @@ from Code.Utils.classify_helper import get_X_y
 
 
 class Smote:
-    def __init__(self, data_name, target_class, under_sampling=None):
-        dataset = MyDataSet(data_name, target_class=target_class)
+    def __init__(self, data_name, target_class, encode=True, under_sampling=None):
+        dataset = MyDataSet(data_name, target_class=target_class, encoding=encode)
         self.datalist_encoded = [d for d in dataset.datalist]
         self.datalist = [dataset.decode(d) for d in self.datalist_encoded]
         X, y = get_X_y(self.datalist)
