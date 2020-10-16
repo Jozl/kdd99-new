@@ -11,17 +11,16 @@ c = SheetWriter()
 
 
 def binary_classify(dataset, positive, negative, positive_len, negative_len, data_name, expend=None, ):
-    data_train = copy.deepcopy(dataset.datalist)
-    data_train = [dataset.decode(d) for d in data_train]
+    data_train = copy.deepcopy(dataset.get_original_datalist)
     # 只用连续值
     data_train = [d.to_data(attrtype_dict=dataset.attrtype_dict, attrtype_list=[DataType.CONTINUOUS]) for d in
                   data_train]
 
-    data_copy = copy.deepcopy(data_train)
+    data_original_positive = copy.deepcopy(data_train)
 
-    data_ori = [d for d in data_copy if d.dataclass == negative]
+    data_original_negative = [d for d in data_original_positive if d.dataclass == negative]
     # 剔除 真实的negative数据
-    data_copy = [d for d in data_copy if d.dataclass == positive]
+    data_original_positive = [d for d in data_original_positive if d.dataclass == positive]
 
     if expend:
         negative_len = positive_len - negative_len
@@ -29,13 +28,13 @@ def binary_classify(dataset, positive, negative, positive_len, negative_len, dat
         data_predict = [d.to_data(attrtype_dict=dataset.attrtype_dict, attrtype_list=[DataType.CONTINUOUS]) for d in
                         data_predict]
         data_train.extend(data_predict)
-        data_copy.extend(data_predict)
+        data_original_positive.extend(data_predict)
 
         clf_ori = SVC()
         # clf_ori = SVC(kernel='linear')
 
-        X_ori, y_ori = get_X_y(data_copy)
-        X_ori_test, y_ori_test = get_X_y(data_ori)
+        X_ori, y_ori = get_X_y(data_original_positive)
+        X_ori_test, y_ori_test = get_X_y(data_original_negative)
 
         acc = 0
         print('训练分类器的数据: ', {k: y_ori.count(k) for k in set(y_ori)})

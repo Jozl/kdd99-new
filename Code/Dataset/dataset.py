@@ -10,7 +10,7 @@ from Code.Dataset.dataloader import DataLoader
 
 
 class MyDataSet(Dataset):
-    def __init__(self, dataname, target_class=None):
+    def __init__(self, dataname, target_class=None, encoding=True):
         datalist = []
         dataclass_dict = {}
         attrtype_dict = {}
@@ -45,7 +45,13 @@ class MyDataSet(Dataset):
         self.datalist = datalist
 
         self.compute_data_min_max()
-        self.encode()
+        if encoding:
+            self.encode()
+        else:
+            self.decode = self.do_nothing
+
+    def do_nothing(self, data):
+        return data
 
     def encode(self):
         self.datalist = [Data(self.normalize(d), d.dataclass) for d in self.datalist]

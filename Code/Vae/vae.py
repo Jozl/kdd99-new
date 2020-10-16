@@ -19,17 +19,17 @@ torch.autograd.set_detect_anomaly(True)
 
 
 class Vae:
-    def __init__(self, data_name, target_class, learning_rate, batch_size, log=False):
+    def __init__(self, data_name, target_class, learning_rate, batch_size, encode=True, log=False):
         self.learning_rate = learning_rate
         self.batch_size = batch_size
         self.target_class = target_class
 
-        dataset = MyDataSet(data_name, target_class=target_class)
+        dataset = MyDataSet(data_name, target_class=target_class, encoding=encode)
         self.dataset = dataset
         self.dataloader_train = DataLoader(dataset=dataset, batch_size=batch_size,
                                            shuffle=True, drop_last=False)
 
-        self.net = NetVAE(in_features=dataset.datalist[0].__len__(), hidden_dims=[16, 32])
+        self.net = NetVAE(in_features=dataset.datalist[0].__len__(), hidden_dims=[16, 32], latent_dim=20)
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=learning_rate)
 
         self.targetdata_list = []
@@ -79,10 +79,7 @@ class Vae:
         data_input_tensor = self.targetdata_list[random.randint(0, self.targetdata_list.__len__() - 1)]
         data_output_tensor, _, _ = self.net(data_input_tensor)
         data_output = self.dataset.decode(data_output_tensor.tolist())
-        # data_output = data_output_tensor.tolist()
-        # data_output.append(self.target_class + '.')
         data_output = Data(data_output, dataclass=self.target_class)
-
         return data_output
 
     @staticmethod
@@ -97,8 +94,8 @@ class Vae:
 
 
 def main():
-    # data_name = 'kdd99_new_multi.dat'
-    data_name = 'yeast6.dat'
+    data_name = 'kdd99_new_multi.dat'
+    # data_name = 'yeast5.dat'
 
     dataset = MyDataSet(data_name)
     positive, negative = dataset.get_positive(), dataset.get_negative()
@@ -113,14 +110,14 @@ def main():
     for d in original_negative:
         print(d)
 
-    learning_rate = 0.00064
+    learning_rate = 0.0064
     batch_size = 50
-    training_round = 100
+    training_round = 60
 
-    generator = Vae(data_name, target_class, learning_rate, batch_size, log=True)(training_round)
+    generator = Vae(data_name, target_class, learning_rate, batch_size, encode=True, log=True)(training_round)
 
     vae_negative = []
-    for _ in range(500):
+    for _ in range(100):
         vae_negative.append(generator.next())
 
     print('vae : ')
